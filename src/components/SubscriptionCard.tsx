@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import type { Subscription } from "../types";
 
 type Props = {
@@ -6,11 +7,13 @@ type Props = {
 
 export const SubscriptionCard = ({subscription}: Props) => {
   return (
-    <article className="card">
-      <h2>{subscription.serviceName}</h2>
-      <p>
-        ¥{subscription.price.toString()} / {subscription.billingCycle === "monthly" ? "月" : "年"}
-      </p>
-    </article>
+    <Link to={`/subscriptions/${subscription.id}`} className="card-link" >
+      <article className="card">
+        <h2>{subscription.serviceName}</h2>
+        <p>
+          ¥{subscription.price.toString()} / {subscription.billingCycle === "monthly" ? "月" : "年"}
+        </p>
+      </article>
+    </Link>
   );
 };

@@ -26,3 +26,9 @@ h1 {
   font-size: 18px;
   font-weight: bold;
 }
+
+.card-link {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}

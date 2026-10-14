@@ -1,19 +1,17 @@
 
+import { BrowserRouter, Route, Routes } from "react-router";
 import "./App.css";
-import { SubscriptionCard } from "./components/SubscriptionCard";
-import { dummySubscriptions } from "./data/dummySubscriptions";
+import { Home } from "./pages/Home";
+import { SubscriptionDetail } from "./pages/SubscriptionDetail";
 
 function App() {
   return (
-    <div className='page'>
-      <h1>SubCheck</h1>
-      {dummySubscriptions.map((subscription) => (
-        <SubscriptionCard
-          key={subscription.id}
-          subscription={subscription}
-         />
-      ))}
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/subscriptions/:id" element={<SubscriptionDetail />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
