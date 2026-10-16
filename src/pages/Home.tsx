@@ -1,11 +1,17 @@
+import { Link } from "react-router";
 import { SubscriptionCard } from "../components/SubscriptionCard";
-import { dummySubscriptions } from "../data/dummySubscriptions";
+import type { Subscription } from "../types";
 
-export const Home = () => {
+type Props = {
+  subscriptions: Subscription[];
+};
+
+export const Home = ({subscriptions}: Props) => {
   return (
     <div className='page'>
       <h1>SubCheck</h1>
-      {dummySubscriptions.map((subscription) => (
+      <Link to="/subscriptions/new">追加</Link>
+      {subscriptions.map((subscription) => (
         <SubscriptionCard
           key={subscription.id}
           subscription={subscription}

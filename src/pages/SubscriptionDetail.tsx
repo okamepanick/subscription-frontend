@@ -1,9 +1,13 @@
 import { useParams, Link } from "react-router";
-import { dummySubscriptions } from "../data/dummySubscriptions";
+import type { Subscription } from "../types";
 
-export const SubscriptionDetail = () => {
+type Props = {
+  subscriptions: Subscription[];
+};
+
+export const SubscriptionDetail = ({subscriptions}: Props) => {
   const { id } = useParams();
-  const subscription = dummySubscriptions.find(
+  const subscription = subscriptions.find(
     (item) => item.id === Number(id)
   );
 
