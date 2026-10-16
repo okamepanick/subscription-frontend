@@ -28,6 +28,7 @@ export const SubscriptionDetail = ({subscriptions}: Props) => {
         ¥{subscription.price.toLocaleString()} /{" "}
         {subscription.billingCycle === "monthly" ? "月" : "年"}
       </p>
+      <Link to={`/subscriptions/${subscription.id}/edit`}>編集</Link>
     </div>
   );
 };
