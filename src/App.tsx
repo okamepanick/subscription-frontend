@@ -6,6 +6,7 @@ import { Home } from "./pages/Home";
 import { SubscriptionDetail } from "./pages/SubscriptionDetail";
 import { SubscriptionNew } from "./pages/SubscriptionNew";
 import type { Subscription } from "./types";
+import { SubscriptionEdit } from "./pages/SubscriptionEdit";
 
 function App() {
   const [subscriptions, setSubscriptions] = useState(dummySubscriptions);
@@ -25,12 +26,25 @@ function App() {
     ]);
   };
 
+  const updateSubscription = (
+    id: number,
+    input: Omit<Subscription, "id">
+  ) => {
+    setSubscriptions(
+      subscriptions.map((item) =>
+        item.id === id ? { ...input, id } : item
+      )
+    );
+  };
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home subscriptions={subscriptions} />} />
-        <Route
-          path="/subscriptions/new" element={<SubscriptionNew onAdd={addSubscription} />} />
+
+        <Route path="/subscriptions/new" element={<SubscriptionNew onAdd={addSubscription} />} />
+
+        <Route path="/subscriptions/:id/edit" element={<SubscriptionEdit subscriptions={subscriptions} onUpdate={updateSubscription}/>}/>
         <Route
           path="/subscriptions/:id"
           element={<SubscriptionDetail subscriptions={subscriptions} />} />
