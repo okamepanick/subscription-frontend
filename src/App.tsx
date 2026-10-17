@@ -37,6 +37,12 @@ function App() {
     );
   };
 
+  const deleteSubscription = (id: number) => {
+    setSubscriptions(
+      subscriptions.filter((item) => item.id !== id)
+    );
+  };
+
   return (
     <BrowserRouter>
       <Routes>
@@ -47,7 +53,13 @@ function App() {
         <Route path="/subscriptions/:id/edit" element={<SubscriptionEdit subscriptions={subscriptions} onUpdate={updateSubscription}/>}/>
         <Route
           path="/subscriptions/:id"
-          element={<SubscriptionDetail subscriptions={subscriptions} />} />
+          element={
+            <SubscriptionDetail
+              subscriptions={subscriptions}
+              onDelete={deleteSubscription}
+            />
+          }
+        />
       </Routes>
     </BrowserRouter>
   )
