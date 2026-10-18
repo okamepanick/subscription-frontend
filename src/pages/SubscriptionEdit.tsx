@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import type { BillingCycle, Subscription } from "../types";
+import type { BillingCycle, PaymentMethod, Subscription } from "../types";
 
 type Props = {
   subscriptions: Subscription[];
@@ -17,6 +17,13 @@ export const SubscriptionEdit = ({subscriptions, onUpdate}: Props) => {
   const [billingCycle, setBillingCycle] = useState<BillingCycle>(
     subscription?.billingCycle ?? "monthly"
   );
+  const [startDate, setStartDate] = useState(subscription?.startDate ?? "");
+  const [nextBillingDate, setNextBillingDate] = useState(
+    subscription?.nextBillingDate ?? ""
+  );
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
+    subscription?.paymentMethod ?? "credit_card"
+  );
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -25,6 +32,9 @@ export const SubscriptionEdit = ({subscriptions, onUpdate}: Props) => {
       serviceName,
       price: Number(price),
       billingCycle,
+      startDate,
+      nextBillingDate,
+      paymentMethod,
     });
     navigate(`/subscriptions/${id}`);
   };
@@ -71,6 +81,40 @@ export const SubscriptionEdit = ({subscriptions, onUpdate}: Props) => {
           >
             <option value="monthly">月額</option>
             <option value="yearly">年額</option>
+          </select>
+        </label>
+        <label>
+          契約開始日
+          <input
+            type="date"
+            value={startDate}
+            onChange={(event) => setStartDate(event.target.value)}
+            required
+          />
+        </label>
+        <label>
+          次回請求日
+          <input
+            type="date"
+            value={nextBillingDate}
+            onChange={(event) => setNextBillingDate(event.target.value)}
+            required
+          />
+        </label>
+        <label>
+          支払い方法
+          <select
+            value={paymentMethod}
+            onChange={(event) =>
+              setPaymentMethod(event.target.value as PaymentMethod)
+            }
+          >
+            <option value="credit_card">クレジットカード</option>
+            <option value="debit_card">デビットカード</option>
+            <option value="apple_pay">Apple Pay</option>
+            <option value="google_pay">Google Pay</option>
+            <option value="carrier">キャリア決済</option>
+            <option value="other">その他</option>
           </select>
         </label>
         <button type="submit">保存</button>

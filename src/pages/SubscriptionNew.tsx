@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
-import type { BillingCycle, Subscription } from "../types";
+import type { BillingCycle, PaymentMethod, Subscription } from "../types";
 
 type Props = {
   onAdd: (subscription: Omit<Subscription, "id">) => void;
@@ -12,6 +12,9 @@ export const SubscriptionNew = ({onAdd}: Props) => {
   const [serviceName, setServiceName] = useState("");
   const [price, setPrice] = useState("");
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
+  const [startDate, setStartDate] = useState("");
+  const [nextBillingDate, setNextBillingDate] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("credit_card");
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -20,6 +23,9 @@ export const SubscriptionNew = ({onAdd}: Props) => {
       serviceName,
       price: Number(price),
       billingCycle,
+      startDate,
+      nextBillingDate,
+      paymentMethod,
     });
     navigate("/");
   };
@@ -57,6 +63,40 @@ export const SubscriptionNew = ({onAdd}: Props) => {
           >
             <option value="monthly">月額</option>
             <option value="yearly">年額</option>
+          </select>
+        </label>
+        <label>
+          契約開始日
+          <input
+            type="date"
+            value={startDate}
+            onChange={(event) => setStartDate(event.target.value)}
+            required
+          />
+        </label>
+        <label>
+          次回請求日
+          <input
+            type="date"
+            value={nextBillingDate}
+            onChange={(event) => setNextBillingDate(event.target.value)}
+            required
+          />
+        </label>
+        <label>
+          支払い方法
+          <select
+            value={paymentMethod}
+            onChange={(event) =>
+              setPaymentMethod(event.target.value as PaymentMethod)
+            }
+          >
+            <option value="credit_card">クレジットカード</option>
+            <option value="debit_card">デビットカード</option>
+            <option value="apple_pay">Apple Pay</option>
+            <option value="google_pay">Google Pay</option>
+            <option value="carrier">キャリア決済</option>
+            <option value="other">その他</option>
           </select>
         </label>
         <button type="submit">保存</button>
