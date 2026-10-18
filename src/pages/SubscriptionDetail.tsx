@@ -30,6 +30,9 @@ export const SubscriptionDetail = ({subscriptions, onDelete}: Props) => {
         ¥{subscription.price.toLocaleString()} /{" "}
         {subscription.billingCycle === "monthly" ? "月" : "年"}
       </p>
+      <p>契約開始日 {subscription.startDate}</p>
+      <p>次回請求日 {subscription.nextBillingDate}</p>
+      <p>支払い方法 {subscription.paymentMethod}</p>
       <Link to={`/subscriptions/${subscription.id}/edit`}>編集</Link>
 
       <button
