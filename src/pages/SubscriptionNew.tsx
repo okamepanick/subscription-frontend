@@ -32,7 +32,9 @@ export const SubscriptionNew = ({onAdd}: Props) => {
 
   return (
     <div className="page">
-      <Link to="/">ホームへ戻る</Link>
+      <button type="button" onClick={() => navigate("/")}>
+        ホームへ戻る
+      </button>
       <h1>サブスクを追加</h1>
       <form onSubmit={handleSubmit}>
         <label>

@@ -43,14 +43,18 @@ export const SubscriptionEdit = ({subscriptions, onUpdate}: Props) => {
     return (
       <div className="page">
         <p>サブスクが見つかりません</p>
-        <Link to="/">ホームへ戻る</Link>
+        <button type="button" onClick={() => navigate("/")}>
+          ホームへ戻る
+        </button>
       </div>
     );
   }
 
   return (
     <div className="page">
-      <Link to="/">ホームへ戻る</Link>
+      <button type="button" onClick={() => navigate("/")}>
+        ホームへ戻る
+      </button>
       <h1>サブスクを編集</h1>
       <form onSubmit={handleSubmit}>
         <label>

@@ -1,5 +1,14 @@
 import { useParams, Link, useNavigate } from "react-router";
-import type { Subscription } from "../types";
+import type { PaymentMethod, Subscription } from "../types";
+
+const paymentMethodLabels: Record<PaymentMethod, string> = {
+  credit_card: "クレジットカード",
+  debit_card: "デビットカード",
+  apple_pay: "Apple Pay",
+  google_pay: "Google Pay",
+  carrier: "キャリア決済",
+  other: "その他",
+};
 
 type Props = {
   subscriptions: Subscription[];
@@ -17,14 +26,18 @@ export const SubscriptionDetail = ({subscriptions, onDelete}: Props) => {
     return (
       <div className="page">
       <p>サブスクが見つかりません</p>
-      <Link to="/">ホームへ戻る</Link>
+      <button type="button" onClick={() => navigate("/")}>
+        ← ホームへ戻る
+      </button>
     </div>
     );
   }
 
   return (
     <div className="page">
-      <Link to="/">← ホームへ戻る</Link>
+      <button type="button" onClick={() => navigate("/")}>
+        ホームへ戻る
+      </button>
       <h1>{subscription.serviceName}</h1>
       <p>
         ¥{subscription.price.toLocaleString()} /{" "}
@@ -32,7 +45,7 @@ export const SubscriptionDetail = ({subscriptions, onDelete}: Props) => {
       </p>
       <p>契約開始日 {subscription.startDate}</p>
       <p>次回請求日 {subscription.nextBillingDate}</p>
-      <p>支払い方法 {subscription.paymentMethod}</p>
+      <p>支払い方法 {paymentMethodLabels[subscription.paymentMethod]}</p>
       <Link to={`/subscriptions/${subscription.id}/edit`}>編集</Link>
 
       <button
