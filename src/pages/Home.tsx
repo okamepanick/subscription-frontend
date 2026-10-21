@@ -13,6 +13,8 @@ export const Home = ({subscriptions}: Props) => {
       <h1>SubCheck</h1>
       <Summary subscriptions={subscriptions} />
       <Link to="/subscriptions/new">追加</Link>
+      <Link to="/subscriptions/new">追加</Link>
+      <Link to="/calendar">カレンダー</Link>
       {subscriptions.map((subscription) => (
         <SubscriptionCard
           key={subscription.id}
