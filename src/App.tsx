@@ -7,6 +7,7 @@ import { SubscriptionDetail } from "./pages/SubscriptionDetail";
 import { SubscriptionNew } from "./pages/SubscriptionNew";
 import type { Subscription } from "./types";
 import { SubscriptionEdit } from "./pages/SubscriptionEdit";
+import { Calendar } from "./pages/Calendar";
 
 function App() {
   const [subscriptions, setSubscriptions] = useState(dummySubscriptions);
@@ -47,6 +48,10 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home subscriptions={subscriptions} />} />
+        <Route
+          path="/calendar"
+          element={<Calendar subscriptions={subscriptions} />}
+        />
 
         <Route path="/subscriptions/new" element={<SubscriptionNew onAdd={addSubscription} />} />
 
@@ -60,6 +65,7 @@ function App() {
             />
           }
         />
+        
       </Routes>
     </BrowserRouter>
   )
