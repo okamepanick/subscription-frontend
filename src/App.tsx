@@ -8,6 +8,7 @@ import { SubscriptionNew } from "./pages/SubscriptionNew";
 import type { Subscription } from "./types";
 import { SubscriptionEdit } from "./pages/SubscriptionEdit";
 import { Calendar } from "./pages/Calendar";
+import { Analysis } from "./pages/Analysis";
 
 function App() {
   const [subscriptions, setSubscriptions] = useState(dummySubscriptions);
@@ -51,6 +52,10 @@ function App() {
         <Route
           path="/calendar"
           element={<Calendar subscriptions={subscriptions} />}
+        />
+        <Route
+          path="/analysis"
+          element={<Analysis subscriptions={subscriptions} />}
         />
 
         <Route path="/subscriptions/new" element={<SubscriptionNew onAdd={addSubscription} />} />
