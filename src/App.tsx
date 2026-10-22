@@ -9,6 +9,7 @@ import type { Subscription } from "./types";
 import { SubscriptionEdit } from "./pages/SubscriptionEdit";
 import { Calendar } from "./pages/Calendar";
 import { Analysis } from "./pages/Analysis";
+import { BottomNav } from "./components/BottomNav";
 
 function App() {
   const [subscriptions, setSubscriptions] = useState(dummySubscriptions);
@@ -70,8 +71,8 @@ function App() {
             />
           }
         />
-        
       </Routes>
+      <BottomNav />
     </BrowserRouter>
   )
 }
