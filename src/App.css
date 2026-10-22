@@ -98,3 +98,40 @@ button {
   justify-content: space-between;
   margin-bottom: 8px;
 }
+
+.bar-track {
+  height: 8px;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #eee;
+}
+
+.bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: #0d6b56;
+}
+
+.ratio-track {
+  display: flex;
+  height: 10px;
+  margin: 8px 0 24px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #eee;
+}
+
+.ratio-fill {
+  display: block;
+  height: 100%;
+}
+
+.ratio-fill.is-monthly {
+  background: #0d6b56;
+}
+
+.ratio-fill.is-yearly {
+  background: #8fb8ab;
+}
