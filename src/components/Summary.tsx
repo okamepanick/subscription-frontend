@@ -30,10 +30,18 @@ export const Summary = ({ subscriptions} : Props) => {
     0
   );
   return (
-    <section>
-      <p>月額合計 ¥{monthlyTotal.toLocaleString()} /月</p>
-      <p>年間合計 ¥{yearlyTotal.toLocaleString()} /年</p>
-      <p>登録数 {subscriptions.length}</p>
-    </section>
+    <section className="mb-5 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+    <p className="m-0 text-sm text-gray-500">月額合計</p>
+    <p className="mb-3 mt-1 text-2xl font-bold !text-[#0d6b56]">
+      ¥{monthlyTotal.toLocaleString()}
+      <span className="text-sm font-medium !text-gray-500"> /月</span>
+    </p>
+    <p className="m-0 text-sm !text-gray-600">
+      年間合計 ¥{yearlyTotal.toLocaleString()} /年
+    </p>
+    <p className="mb-0 mt-1 text-sm !text-gray-600">
+      登録数 {subscriptions.length}
+    </p>
+  </section>
   )
 }
