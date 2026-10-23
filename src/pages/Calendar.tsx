@@ -39,52 +39,64 @@ export const Calendar = ({ subscriptions }: Props) => {
   return (
     <div className="page">
       <h1>カレンダー</h1>
-      <div className="calendar-toolbar">
-        <button type="button" onClick={() => shiftMonth(-1)}>
-          ＜
-        </button>
-        <p>
-          {year}年{monthIndex + 1}月
-        </p>
-        <button type="button" onClick={() => shiftMonth(1)}>
-          ＞
-        </button>
-      </div>
-      <div className="calendar-weekdays">
-        {WEEKDAYS.map((label) => (
-          <span key={label}>{label}</span>
-        ))}
-      </div>
-      <div className="calendar-grid">
-        {cells.map((day, index) => {
-          if (day === null) {
-            return <span key={index} className="calendar-cell" />;
-          }
+      <div className="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm">
+        <div className="calendar-toolbar">
+          <button
+            type="button"
+            onClick={() => shiftMonth(-1)}
+            className="!m-0 !bg-white !text-[#0d6b56]"
+          >
+            ＜
+          </button>
+          <p className="m-0 font-semibold">
+            {year}年{monthIndex + 1}月
+          </p>
+          <button
+            type="button"
+            onClick={() => shiftMonth(1)}
+            className="!m-0 !bg-white !text-[#0d6b56]"
+          >
+            ＞
+          </button>
+        </div>
+        <div className="calendar-weekdays">
+          {WEEKDAYS.map((label) => (
+            <span key={label}>{label}</span>
+          ))}
+        </div>
+        <div className="calendar-grid">
+          {cells.map((day, index) => {
+            if (day === null) {
+              return <span key={index} className="calendar-cell" />;
+            }
 
-          const month = String(monthIndex + 1).padStart(2, "0");
-          const date = String(day).padStart(2, "0");
-          const iso = `${year}-${month}-${date}`;
-          const hasBilling = subscriptions.some(
-            (item) => item.nextBillingDate === iso
-          );
+            const month = String(monthIndex + 1).padStart(2, "0");
+            const date = String(day).padStart(2, "0");
+            const iso = `${year}-${month}-${date}`;
+            const hasBilling = subscriptions.some(
+              (item) => item.nextBillingDate === iso
+            );
+            const isSelected = selectedDate === iso;
 
-          return (
-            <button
-              key={index}
-              type="button"
-              className={
-                hasBilling ? "calendar-cell has-billing" : "calendar-cell"
-              }
-              onClick={() => setSelectedDate(iso)}
-            >
-              {day}
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={index}
+                type="button"
+                className={`!m-0 h-10 w-full rounded-full p-0 text-sm ${
+                  hasBilling
+                  ? "font-bold !bg-[#d8eee8] !text-[#0d6b56]"
+                  : "!bg-transparent !text-[#1c1c1a]"
+                } ${isSelected ? "ring-2 ring-[#0d6b56]" : ""}`}
+                onClick={() => setSelectedDate(iso)}
+              >
+                {day}
+              </button>
+            );
+          })}
+        </div>
       </div>
-
       {selectedDate ? (
-        <div>
+        <div className="mt-4">
           <h2>{selectedDate} の請求</h2>
           {selectedBillings.length === 0 ? (
             <p>この日の請求はありません</p>
@@ -98,7 +110,7 @@ export const Calendar = ({ subscriptions }: Props) => {
           )}
         </div>
       ) : (
-        <p>日付を選ぶと、その日の請求が出ます</p>
+        <p className="mt-4">日付を選ぶと、その日の請求が出ます</p>
       )}
     </div>
   );
