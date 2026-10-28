@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router";
 import type { BillingCycle, PaymentMethod, Subscription } from "../types";
 
 type Props = {
-  onAdd: (subscription: Omit<Subscription, "id">) => void;
+  onAdd: (subscription: Omit<Subscription, "id">) => Promise<void>;
 };
 
 export const SubscriptionNew = ({onAdd}: Props) => {
@@ -16,18 +16,21 @@ export const SubscriptionNew = ({onAdd}: Props) => {
   const [nextBillingDate, setNextBillingDate] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("credit_card");
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    onAdd({
-      serviceName,
-      price: Number(price),
-      billingCycle,
-      startDate,
-      nextBillingDate,
-      paymentMethod,
-    });
-    navigate("/");
+    try {
+      await onAdd({
+        serviceName,
+        price: Number(price),
+        billingCycle,
+        startDate,
+        nextBillingDate,
+        paymentMethod,
+      });
+      navigate("/");
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "登録に失敗しました");
+    }
   };
 
   const fieldClass = "mb-4 block text-sm !text-gray-600";
