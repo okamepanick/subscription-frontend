@@ -10,7 +10,27 @@ import { Calendar } from "./pages/Calendar";
 import { Analysis } from "./pages/Analysis";
 import { BottomNav } from "./components/BottomNav";
 
-const API_URL = "http://localhost:3000/api/subscriptions";
+const API_URL = "https://subcheck-okp9.onrender.com/api/subscriptions";
+
+const LIFF_ID = import.meta.env.VITE_LIFF_ID;
+
+declare global {
+  interface Window {
+    liff: {
+      init: (config: { liffId: string }) => Promise<void>;
+      getIDToken: () => string | null;
+    };
+  }
+}
+
+async function lineAuthHeaders(): Promise<HeadersInit> {
+  const idToken = window.liff.getIDToken();
+  if (!idToken) {
+    throw new Error("LINEの画面から開いてください");
+  }
+
+  return { Authorization: `Bearer ${idToken}` };
+}
 
 function App() {
   // subscriptions: 画面に出すサブスク一覧。最初は空で、APIの結果で上書きする
@@ -22,51 +42,58 @@ function App() {
 
   // ページを開いたとき、1回だけRailsの一覧APIを呼ぶ
   useEffect(() => {
-    // 画面を離れたあと、遅れて返ってきた結果で表示を書き換えないようにする
-    const controller = new AbortController();
+  const controller = new AbortController();
 
-    async function loadSubscriptions() {
-      try {
-        // 開発用データベースのサブスク一覧をJSONでもらう
-        const response = await fetch(API_URL, { signal: controller.signal });
-        // 200番台以外（404や500など）は失敗として扱う
-        if (!response.ok) {
-          throw new Error(`一覧の取得に失敗しました (${response.status})`);
-        }
-        const data = (await response.json()) as Subscription[];
-        // もらった配列を、画面のカードに使うデータへ入れる
-        setSubscriptions(data);
-      } catch (error) {
-        // 画面を離れて中断しただけなら、エラー表示にはしない
-        if (controller.signal.aborted) {
-          return;
-        }
-        setLoadError(
-          error instanceof Error ? error.message : "一覧の取得に失敗しました",
-        );
-      } finally {
-        // 成功でも失敗でも、中断でなければ読み込み表示を終わらせる
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
+  async function loadSubscriptions() {
+    try {
+      if (!LIFF_ID) {
+        throw new Error("LIFF IDが設定されていません");
+      }
+      await window.liff.init({ liffId: LIFF_ID });
+      const headers = await lineAuthHeaders();
+      const response = await fetch(API_URL, {
+        headers,
+        signal: controller.signal,
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error ?? `一覧の取得に失敗しました (${response.status})`);
+      }
+      setSubscriptions(data);
+    } catch (error) {
+      console.error("LIFFまたは一覧取得エラー:", error);
+      if (controller.signal.aborted) {
+        return;
+      }
+      setLoadError(
+        error instanceof Error ? error.message : "LINEの画面から開き直してください",
+      );
+    } finally {
+      if (!controller.signal.aborted) {
+        setLoading(false);
       }
     }
+  }
 
     void loadSubscriptions();
-    // この画面が消えるとき、進行中の取得を止める
     return () => controller.abort();
   }, []);
 
   const addSubscription = async (input: Omit<Subscription, "id">) => {
-    const response = await fetch(API_URL, {
+  const headers = await lineAuthHeaders();
+  const response = await fetch(API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      ...headers,
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(input),
   });
   const data = await response.json();
   if (!response.ok) {
     throw new Error(data.error ?? "登録に失敗しました");
   }
+
   setSubscriptions((current) => [...current, data]);
   };
 
@@ -87,13 +114,18 @@ function App() {
     );
   };
 
-  // 一覧が届くまで、カードの代わりに「読み込み中」だけ出す
-  if (loading) {
+  const isNewPage = window.location.pathname === "/subscriptions/new";
+  if (isNewPage && loading) {
+  return <p style={{ padding: 20 }}>Reactは動いています。読み込み中...</p>;
+}
+
+  // 一覧が届くまで、カードの代わりに「読み込み中」だけ出す。登録画面は一覧を待たない
+  if (loading && !isNewPage) {
     return <p className="page">読み込み中...</p>;
   }
 
-  // 取得に失敗したら、カードは出さずエラーメッセージだけ出す
-  if (loadError) {
+  // 取得に失敗したら、カードは出さずエラーメッセージだけ出す。登録画面はエラーでも開く
+  if (loadError && !isNewPage) {
     return <p className="page">{loadError}</p>;
   }
 
