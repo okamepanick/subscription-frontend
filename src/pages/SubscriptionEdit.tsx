@@ -5,7 +5,7 @@ import type { BillingCycle, PaymentMethod, Subscription } from "../types";
 
 type Props = {
   subscriptions: Subscription[];
-  onUpdate: (id: number, subscription: Omit<Subscription, "id" >) => void;
+  onUpdate: (id: number, subscription: Omit<Subscription, "id" >) => Promise<void>;
 };
 
 export const SubscriptionEdit = ({subscriptions, onUpdate}: Props) => {
@@ -25,18 +25,22 @@ export const SubscriptionEdit = ({subscriptions, onUpdate}: Props) => {
     subscription?.paymentMethod ?? "credit_card"
   );
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    onUpdate(Number(id), {
-      serviceName,
-      price: Number(price),
-      billingCycle,
-      startDate,
-      nextBillingDate,
-      paymentMethod,
-    });
-    navigate(`/subscriptions/${id}`);
+    try {
+      await onUpdate(Number(id), {
+        serviceName,
+        price: Number(price),
+        billingCycle,
+        startDate,
+        nextBillingDate,
+        paymentMethod,
+      });
+      navigate(`/subscriptions/${id}`);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "編集に失敗しました");
+    }
   };
 
   if (!subscription) {

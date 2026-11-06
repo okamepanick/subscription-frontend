@@ -12,7 +12,7 @@ const paymentMethodLabels: Record<PaymentMethod, string> = {
 
 type Props = {
   subscriptions: Subscription[];
-  onDelete: (id: number) => void;
+  onDelete: (id: number) => Promise<void>;
 };
 
 export const SubscriptionDetail = ({subscriptions, onDelete}: Props) => {
@@ -70,15 +70,19 @@ export const SubscriptionDetail = ({subscriptions, onDelete}: Props) => {
     </Link>
     <button
       type="button"
-      onClick={() => {
+      onClick={async () => {
         const ok = window.confirm(
           `${subscription.serviceName} を削除しますか？`
         );
         if (!ok) {
           return;
         }
-        onDelete(subscription.id);
-        navigate("/");
+        try {
+          await onDelete(subscription.id);
+          navigate("/");
+        } catch (error) {
+          alert(error instanceof Error ? error.message : "削除に失敗しました");
+        }
       }}
       className="w-full rounded-xl !bg-white !text-red-600"
     >

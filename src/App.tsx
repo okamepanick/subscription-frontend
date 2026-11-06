@@ -97,22 +97,43 @@ function App() {
   setSubscriptions((current) => [...current, data]);
   };
 
-  const updateSubscription = (
+  const updateSubscription = async (
     id: number,
     input: Omit<Subscription, "id">
   ) => {
-    setSubscriptions(
-      subscriptions.map((item) =>
-        item.id === id ? { ...input, id } : item
-      )
+    const headers = await lineAuthHeaders();
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "PATCH",
+      headers: {
+        ...headers,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(input),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error ?? "編集に失敗しました");
+    }
+
+    setSubscriptions((current) =>
+      current.map((item) => (item.id === id ? data : item))
     );
   };
 
-  const deleteSubscription = (id: number) => {
-    setSubscriptions(
-      subscriptions.filter((item) => item.id !== id)
-    );
-  };
+  const deleteSubscription = async (id: number) => {
+    const headers = await lineAuthHeaders();
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "DELETE",
+      headers,
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error ?? "削除に失敗しました");
+    }
+
+  setSubscriptions((current) => current.filter((item) => item.id !== id));
+};
 
   const isNewPage = window.location.pathname === "/subscriptions/new";
   if (isNewPage && loading) {
