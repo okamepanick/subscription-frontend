@@ -1,75 +1,34 @@
-# React + TypeScript + Vite
+# SubCheck
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+サブスクリプションの請求日と支出を確認するアプリです。
+LINE のリッチメニューにあるアプリボタンから開きます。
 
-Currently, two official plugins are available:
+## できること
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- サブスクの登録、編集、削除
+- ホームに、登録したサブスクをカードで表示
+- カレンダーで次回請求日を確認。日付をタップすると、その日のサブスクを表示
+- 月額換算の合計、年間換算の合計、件数を表示
+- 月額払いと年額払いの割合を表示
+- サービスごとの支出を、月額換算の棒グラフで表示
 
-## React Compiler
+データは Rails の API に保存します。LINE の ID トークンで本人を確認し、LINE ユーザー ID は URL にも JSON にも入れません。
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 使用技術
 
-## Expanding the ESLint configuration
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## ローカルでの起動
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+`.env` に `VITE_LIFF_ID` を書いてから、次を実行します。
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+`.env` は GitHub に含めません。
