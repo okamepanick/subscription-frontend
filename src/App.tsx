@@ -9,6 +9,7 @@ import { SubscriptionEdit } from "./pages/SubscriptionEdit";
 import { Calendar } from "./pages/Calendar";
 import { Analysis } from "./pages/Analysis";
 import { BottomNav } from "./components/BottomNav";
+import { Guide } from "./pages/Guide";
 
 const API_URL = "https://subcheck-okp9.onrender.com/api/subscriptions";
 
@@ -136,17 +137,18 @@ function App() {
 };
 
   const isNewPage = window.location.pathname === "/subscriptions/new";
+  const isGuidePage = window.location.pathname === "/guide";
   if (isNewPage && loading) {
   return <p style={{ padding: 20 }}>Reactは動いています。読み込み中...</p>;
 }
 
-  // 一覧が届くまで、カードの代わりに「読み込み中」だけ出す。登録画面は一覧を待たない
-  if (loading && !isNewPage) {
+  // 一覧が届くまで、カードの代わりに「読み込み中」だけ出す。登録画面と使い方は一覧を待たない
+  if (loading && !isNewPage && !isGuidePage) {
     return <p className="page">読み込み中...</p>;
   }
 
-  // 取得に失敗したら、カードは出さずエラーメッセージだけ出す。登録画面はエラーでも開く
-  if (loadError && !isNewPage) {
+  // 取得に失敗したら、カードは出さずエラーメッセージだけ出す。登録画面と使い方はエラーでも開く
+  if (loadError && !isNewPage && !isGuidePage) {
     return <p className="page">{loadError}</p>;
   }
 
@@ -154,6 +156,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home subscriptions={subscriptions} />} />
+        <Route path="/guide" element={<Guide />} />
         <Route
           path="/calendar"
           element={<Calendar subscriptions={subscriptions} />}
@@ -176,7 +179,7 @@ function App() {
           }
         />
       </Routes>
-      <BottomNav />
+      {!isGuidePage && <BottomNav />}
     </BrowserRouter>
   )
 }
