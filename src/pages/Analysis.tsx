@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { Summary } from "../components/Summary";
 import type { Subscription } from "../types";
 
 type Props = {
   subscriptions: Subscription[];
 };
+
+type SortOrder = "high" | "low" | "name";
 
 const toMonthAmount = (subscription: Subscription) => {
   if (subscription.billingCycle === "yearly") {
@@ -20,9 +23,16 @@ const toYearlyAmount = (subscription: Subscription) => {
 };
 
 export const Analysis = ({ subscriptions }: Props) => {
-  const ranked = [...subscriptions].sort(
-    (a, b) => toMonthAmount(b) - toMonthAmount(a)
-  );
+  const [sortOrder, setSortOrder] = useState<SortOrder>("high");
+  const ranked = [...subscriptions].sort((a, b) => {
+    if (sortOrder === "low") {
+      return toMonthAmount(a) - toMonthAmount(b);
+    }
+    if (sortOrder === "name") {
+      return a.serviceName.localeCompare(b.serviceName, "ja");
+    }
+    return toMonthAmount(b) - toMonthAmount(a);
+  });
   const maxMonthly = Math.max(...ranked.map((item) => toMonthAmount(item)), 1);
 
   const monthlyCycleTotal = subscriptions
@@ -38,7 +48,9 @@ export const Analysis = ({ subscriptions }: Props) => {
 
   return (
     <div className="page">
-    <h1>分析</h1>
+    <h1 className="mb-5 text-3xl font-bold tracking-[0.14em]">
+      分<span className="!text-[#0d6b56]">析</span>
+    </h1>
     <Summary subscriptions={subscriptions} />
     <section className="mb-5 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
       <h2 className="mt-0 mb-3 text-base font-semibold">月額 / 年額の割合</h2>
@@ -56,6 +68,15 @@ export const Analysis = ({ subscriptions }: Props) => {
       </div>
     </section>
     <h2 className="mb-3 text-base font-semibold">サービス別の支出</h2>
+    <select
+      className="mb-4 block w-full rounded-xl border border-gray-200 bg-white px-3 py-2 !text-[#1c1c1a]"
+      value={sortOrder}
+      onChange={(event) => setSortOrder(event.target.value as SortOrder)}
+    >
+      <option value="high">月額が高い順</option>
+      <option value="low">月額が低い順</option>
+      <option value="name">名前順</option>
+    </select>
     {ranked.map((subscription) => {
       const monthly = toMonthAmount(subscription);
       const width = Math.round((monthly / maxMonthly) * 100);

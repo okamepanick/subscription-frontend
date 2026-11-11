@@ -11,7 +11,9 @@ import { Analysis } from "./pages/Analysis";
 import { BottomNav } from "./components/BottomNav";
 import { Guide } from "./pages/Guide";
 
-const API_URL = "https://subcheck-okp9.onrender.com/api/subscriptions";
+const API_URL =
+  import.meta.env.VITE_API_URL ??
+  "https://subcheck-okp9.onrender.com/api/subscriptions";
 
 const LIFF_ID = import.meta.env.VITE_LIFF_ID;
 
