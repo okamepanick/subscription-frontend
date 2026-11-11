@@ -11,6 +11,12 @@ export default defineConfig({
     allowedHosts: [".ngrok-free.app"],
   },
   preview: {
-  allowedHosts: [".ngrok-free.app", ".trycloudflare.com"],
+    allowedHosts: [".ngrok-free.app", ".trycloudflare.com"],
+    proxy: {
+      "/api": {
+        target: "http://127.0.0.1:3000",
+        changeOrigin: true,
+      },
+    },
   },
 });
