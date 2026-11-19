@@ -10,6 +10,7 @@ import { Calendar } from "./pages/Calendar";
 import { Analysis } from "./pages/Analysis";
 import { BottomNav } from "./components/BottomNav";
 import { Guide } from "./pages/Guide";
+import { Landing } from "./pages/Landing";
 
 const API_URL =
   import.meta.env.VITE_API_URL ??
@@ -140,17 +141,18 @@ function App() {
 
   const isNewPage = window.location.pathname === "/subscriptions/new";
   const isGuidePage = window.location.pathname === "/guide";
+  const isWelcomePage = window.location.pathname === "/welcome";
   if (isNewPage && loading) {
-  return <p style={{ padding: 20 }}>Reactは動いています。読み込み中...</p>;
-}
+    return <p style={{ padding: 20 }}>Reactは動いています。読み込み中...</p>;
+  }
 
-  // 一覧が届くまで、カードの代わりに「読み込み中」だけ出す。登録画面と使い方は一覧を待たない
-  if (loading && !isNewPage && !isGuidePage) {
+  // 一覧が届くまで、カードの代わりに「読み込み中」だけ出す。登録画面と使い方、紹介ページは一覧を待たない
+  if (loading && !isNewPage && !isGuidePage && !isWelcomePage) {
     return <p className="page">読み込み中...</p>;
   }
 
-  // 取得に失敗したら、カードは出さずエラーメッセージだけ出す。登録画面と使い方はエラーでも開く
-  if (loadError && !isNewPage && !isGuidePage) {
+  // 取得に失敗したら、カードは出さずエラーメッセージだけ出す。登録画面と使い方、紹介ページはエラーでも開く
+  if (loadError && !isNewPage && !isGuidePage && !isWelcomePage) {
     return <p className="page">{loadError}</p>;
   }
 
@@ -159,6 +161,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home subscriptions={subscriptions} />} />
         <Route path="/guide" element={<Guide />} />
+        <Route path="/welcome" element={<Landing />} />
         <Route
           path="/calendar"
           element={<Calendar subscriptions={subscriptions} />}
@@ -181,9 +184,9 @@ function App() {
           }
         />
       </Routes>
-      {!isGuidePage && <BottomNav />}
+      {!isGuidePage && !isWelcomePage && <BottomNav />}
     </BrowserRouter>
-  )
+  );
 }
 
 export default App
