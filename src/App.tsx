@@ -143,15 +143,15 @@ function App() {
   const isGuidePage = window.location.pathname === "/guide";
   const isWelcomePage = window.location.pathname === "/welcome";
   if (isNewPage && loading) {
-  return <p style={{ padding: 20 }}>Reactは動いています。読み込み中...</p>;
-}
+    return <p style={{ padding: 20 }}>Reactは動いています。読み込み中...</p>;
+  }
 
-  // 一覧が届くまで、カードの代わりに「読み込み中」だけ出す。登録画面と使い方は一覧を待たない
+  // 一覧が届くまで、カードの代わりに「読み込み中」だけ出す。登録画面と使い方、紹介ページは一覧を待たない
   if (loading && !isNewPage && !isGuidePage && !isWelcomePage) {
     return <p className="page">読み込み中...</p>;
   }
 
-  // 取得に失敗したら、カードは出さずエラーメッセージだけ出す。登録画面と使い方はエラーでも開く
+  // 取得に失敗したら、カードは出さずエラーメッセージだけ出す。登録画面と使い方、紹介ページはエラーでも開く
   if (loadError && !isNewPage && !isGuidePage && !isWelcomePage) {
     return <p className="page">{loadError}</p>;
   }
@@ -186,7 +186,7 @@ function App() {
       </Routes>
       {!isGuidePage && !isWelcomePage && <BottomNav />}
     </BrowserRouter>
-  )
+  );
 }
 
 export default App
