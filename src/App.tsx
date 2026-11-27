@@ -17,12 +17,14 @@ const API_URL =
   "https://subcheck-okp9.onrender.com/api/subscriptions";
 
 const LIFF_ID = import.meta.env.VITE_LIFF_ID;
+const CREATE_LIFF_ID = import.meta.env.VITE_SUBSCRIPTION_CREATE_LIFF_ID;
 
 declare global {
   interface Window {
     liff: {
       init: (config: { liffId: string }) => Promise<void>;
       getIDToken: () => string | null;
+      closeWindow: () => void;
     };
   }
 }
@@ -50,10 +52,12 @@ function App() {
 
   async function loadSubscriptions() {
     try {
-      if (!LIFF_ID) {
+      const isNewPage = window.location.pathname === "/subscriptions/new";
+      const liffId = isNewPage ? CREATE_LIFF_ID : LIFF_ID;
+      if (!liffId) {
         throw new Error("LIFF IDが設定されていません");
       }
-      await window.liff.init({ liffId: LIFF_ID });
+      await window.liff.init({ liffId });
       const headers = await lineAuthHeaders();
       const response = await fetch(API_URL, {
         headers,
@@ -143,7 +147,7 @@ function App() {
   const isGuidePage = window.location.pathname === "/guide";
   const isWelcomePage = window.location.pathname === "/welcome";
   if (isNewPage && loading) {
-    return <p style={{ padding: 20 }}>Reactは動いています。読み込み中...</p>;
+    return <p style={{ padding: 20 }}>読み込み中...</p>;
   }
 
   // 一覧が届くまで、カードの代わりに「読み込み中」だけ出す。登録画面と使い方、紹介ページは一覧を待たない
@@ -184,7 +188,7 @@ function App() {
           }
         />
       </Routes>
-      {!isGuidePage && !isWelcomePage && <BottomNav />}
+      {!isGuidePage && !isWelcomePage && !isNewPage && <BottomNav />}
     </BrowserRouter>
   );
 }

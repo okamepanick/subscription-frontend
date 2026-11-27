@@ -21,6 +21,7 @@ export const Home = ({subscriptions}: Props) => {
       <Summary subscriptions={subscriptions} />
       <Link
         to="/subscriptions/new"
+        state={{ fromApp: true }}
         className="mb-4 inline-block rounded-xl bg-[#0d6b56] px-4 py-2 !text-white text-white no-underline"
       >
         追加
