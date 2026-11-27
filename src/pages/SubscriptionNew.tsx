@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import type { BillingCycle, PaymentMethod, Subscription } from "../types";
 
 type Props = {
@@ -9,6 +9,12 @@ type Props = {
 
 export const SubscriptionNew = ({onAdd}: Props) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromApp =
+    typeof location.state === "object" &&
+    location.state !== null &&
+    "fromApp" in location.state &&
+    location.state.fromApp === true;
   const [serviceName, setServiceName] = useState("");
   const [price, setPrice] = useState("");
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
@@ -27,7 +33,12 @@ export const SubscriptionNew = ({onAdd}: Props) => {
         nextBillingDate,
         paymentMethod,
       });
-      navigate("/");
+      if (fromApp) {
+        alert("登録しました");
+        navigate("/");
+        return;
+      }
+      window.liff.closeWindow();
     } catch (error) {
       alert(error instanceof Error ? error.message : "登録に失敗しました");
     }
@@ -40,14 +51,18 @@ export const SubscriptionNew = ({onAdd}: Props) => {
 
   return (
     <div className="page">
-    <button
-      type="button"
-      onClick={() => navigate("/")}
-      className="mb-4 !bg-transparent !px-0 !text-sm !text-[#0d6b56]"
-    >
-      ← ホームへ戻る
-    </button>
-    <h1>サブスクを追加</h1>
+    {fromApp && (
+      <button
+        type="button"
+        onClick={() => navigate("/")}
+        className="mb-4 !bg-transparent !px-0 !text-sm !text-[#0d6b56]"
+      >
+        ← ホームへ戻る
+      </button>
+    )}
+    <h1 className="mb-5 text-3xl font-bold tracking-[0.14em]">
+      サブスク登<span className="!text-[#0d6b56]">録</span>
+    </h1>
     <form onSubmit={handleSubmit}>
       <label className={fieldClass}>
         サービス名
