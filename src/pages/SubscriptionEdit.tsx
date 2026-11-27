@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 import type { BillingCycle, PaymentMethod, Subscription } from "../types";
 
 type Props = {
@@ -10,7 +10,10 @@ type Props = {
 
 export const SubscriptionEdit = ({subscriptions, onUpdate}: Props) => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id: pathId } = useParams();
+  const [searchParams] = useSearchParams();
+  const id = pathId ?? searchParams.get("id") ?? undefined;
+  const fromApp = pathId !== undefined;
   const subscription = subscriptions.find((item) => item.id === Number(id));
   const [serviceName, setServiceName] = useState(subscription?.serviceName ?? "");
   const [price, setPrice] = useState(subscription ? String(subscription.price) : "");
@@ -37,7 +40,11 @@ export const SubscriptionEdit = ({subscriptions, onUpdate}: Props) => {
         nextBillingDate,
         paymentMethod,
       });
-      navigate(`/subscriptions/${id}`);
+      if (fromApp) {
+        navigate(`/subscriptions/${id}`);
+        return;
+      }
+      window.liff.closeWindow();
     } catch (error) {
       alert(error instanceof Error ? error.message : "編集に失敗しました");
     }
@@ -47,9 +54,11 @@ export const SubscriptionEdit = ({subscriptions, onUpdate}: Props) => {
     return (
       <div className="page">
         <p>サブスクが見つかりません</p>
-        <button type="button" onClick={() => navigate("/")}>
-          ホームへ戻る
-        </button>
+        {fromApp && (
+          <button type="button" onClick={() => navigate("/")}>
+            ホームへ戻る
+          </button>
+        )}
       </div>
     );
   }
@@ -61,14 +70,18 @@ export const SubscriptionEdit = ({subscriptions, onUpdate}: Props) => {
 
   return (
     <div className="page">
-    <button
-      type="button"
-      onClick={() => navigate("/")}
-      className="mb-4 !bg-transparent !px-0 !text-sm !text-[#0d6b56]"
-    >
-      ← ホームへ戻る
-    </button>
-    <h1>サブスクを編集</h1>
+    {fromApp && (
+      <button
+        type="button"
+        onClick={() => navigate("/")}
+        className="mb-4 !bg-transparent !px-0 !text-sm !text-[#0d6b56]"
+      >
+        ← ホームへ戻る
+      </button>
+    )}
+    <h1 className="mb-5 text-3xl font-bold tracking-[0.14em]">
+      サブスク編<span className="!text-[#0d6b56]">集</span>
+    </h1>
     <form onSubmit={handleSubmit}>
       <label className={fieldClass}>
         サービス名

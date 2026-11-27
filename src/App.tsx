@@ -18,6 +18,7 @@ const API_URL =
 
 const LIFF_ID = import.meta.env.VITE_LIFF_ID;
 const CREATE_LIFF_ID = import.meta.env.VITE_SUBSCRIPTION_CREATE_LIFF_ID;
+const EDIT_LIFF_ID = import.meta.env.VITE_SUBSCRIPTION_EDIT_LIFF_ID;
 
 declare global {
   interface Window {
@@ -53,7 +54,8 @@ function App() {
   async function loadSubscriptions() {
     try {
       const isNewPage = window.location.pathname === "/subscriptions/new";
-      const liffId = isNewPage ? CREATE_LIFF_ID : LIFF_ID;
+      const isLineEditPage = window.location.pathname === "/subscriptions/edit";
+      const liffId = isNewPage ? CREATE_LIFF_ID : isLineEditPage ? EDIT_LIFF_ID : LIFF_ID;
       if (!liffId) {
         throw new Error("LIFF IDが設定されていません");
       }
@@ -144,19 +146,20 @@ function App() {
 };
 
   const isNewPage = window.location.pathname === "/subscriptions/new";
+  const isLineEditPage = window.location.pathname === "/subscriptions/edit";
   const isGuidePage = window.location.pathname === "/guide";
   const isWelcomePage = window.location.pathname === "/welcome";
-  if (isNewPage && loading) {
+  if ((isNewPage || isLineEditPage) && loading) {
     return <p style={{ padding: 20 }}>読み込み中...</p>;
   }
 
-  // 一覧が届くまで、カードの代わりに「読み込み中」だけ出す。登録画面と使い方、紹介ページは一覧を待たない
-  if (loading && !isNewPage && !isGuidePage && !isWelcomePage) {
+  // 一覧が届くまで、カードの代わりに「読み込み中」だけ出す。登録画面と使い方、紹介ページ、LINEの編集画面は一覧を待たない
+  if (loading && !isNewPage && !isLineEditPage && !isGuidePage && !isWelcomePage) {
     return <p className="page">読み込み中...</p>;
   }
 
-  // 取得に失敗したら、カードは出さずエラーメッセージだけ出す。登録画面と使い方、紹介ページはエラーでも開く
-  if (loadError && !isNewPage && !isGuidePage && !isWelcomePage) {
+  // 取得に失敗したら、カードは出さずエラーメッセージだけ出す。登録画面と使い方、紹介ページ、LINEの編集画面はエラーでも開く
+  if (loadError && !isNewPage && !isLineEditPage && !isGuidePage && !isWelcomePage) {
     return <p className="page">{loadError}</p>;
   }
 
@@ -177,6 +180,8 @@ function App() {
 
         <Route path="/subscriptions/new" element={<SubscriptionNew onAdd={addSubscription} />} />
 
+        <Route path="/subscriptions/edit" element={<SubscriptionEdit subscriptions={subscriptions} onUpdate={updateSubscription}/>}/>
+
         <Route path="/subscriptions/:id/edit" element={<SubscriptionEdit subscriptions={subscriptions} onUpdate={updateSubscription}/>}/>
         <Route
           path="/subscriptions/:id"
@@ -188,7 +193,7 @@ function App() {
           }
         />
       </Routes>
-      {!isGuidePage && !isWelcomePage && !isNewPage && <BottomNav />}
+      {!isGuidePage && !isWelcomePage && !isNewPage && !isLineEditPage && <BottomNav />}
     </BrowserRouter>
   );
 }
